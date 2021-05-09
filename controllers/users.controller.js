@@ -24,7 +24,6 @@ module.exports = {
   updateUserInfo: async (req, res) => {
     passport.authenticate('jwt', { session: false }, (err, callBack) => {
       if (err) {
-        console.log(err);
         const response = CustomResponse.SERVER_ERROR;
         response.trace = err;
         res.status(500).json(response);
