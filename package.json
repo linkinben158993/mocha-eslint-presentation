@@ -1,0 +1,63 @@
+{
+  "name": "mocha-eslint-husky-demo",
+  "version": "0.0.0",
+  "private": true,
+  "dependencies": {
+    "bcrypt": "^5.0.0",
+    "cookie-parser": "~1.4.4",
+    "debug": "~2.6.9",
+    "dotenv": "^8.2.0",
+    "express": "~4.16.1",
+    "express-session": "^1.17.1",
+    "hbs": "~4.0.4",
+    "http-errors": "~1.6.3",
+    "morgan": "~1.9.1",
+    "cors": "^2.8.5",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.11.13",
+    "passport": "^0.4.1",
+    "passport-jwt": "^4.0.0",
+    "passport-local": "^1.0.0",
+    "swagger-autogen": "^2.5.10",
+    "swagger-jsdoc": "^6.0.2",
+    "swagger-ui-express": "^4.1.6",
+    "nodemon": "^2.0.7"
+  },
+  "devDependencies": {
+    "chai": "^4.3.3",
+    "chai-http": "^4.3.0",
+    "eslint": "^7.18.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-config-prettier": "^7.2.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^3.3.1",
+    "eslint-plugin-security": "^1.4.0",
+    "husky": "^4.3.0",
+    "lint-staged": "^10.4.0",
+    "mocha": "^8.3.0",
+    "prettier": "^2.2.1",
+    "pretty-quick": "^3.1.0"
+  },
+  "scripts": {
+    "start": "node ./middlewares/swagger.js && node ./bin/www",
+    "dev": "node ./middlewares/swagger.js && nodemon ./bin/www",
+    "test": "echo \"Begin Test With Mocha\" && mocha --timeout 0 --exit"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "**/*.js": [
+      "pretty-quick --staged",
+      "prettier --single-quote --write",
+      "eslint --fix",
+      "npm run test"
+    ],
+    "*.js": [
+      "npm run test"
+    ]
+  }
+}
