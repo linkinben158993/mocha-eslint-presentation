@@ -1,9 +1,10 @@
-const passport = require('passport');
-const JWT = require('jsonwebtoken');
-const Users = require('../models/mUsers');
+const passport = require("passport");
+const JWT = require("jsonwebtoken");
+const Users = require("../models/mUsers");
 // eslint-disable-next-line no-unused-vars
-const passportConfig = require('../middlewares/passport');
-const CustomResponse = require('../constants/response.message');
+const passportConfig = require("../middlewares/passport");
+const CustomResponse = require("../constants/response.message");
+const userModel = require("../models/mUsers");
 
 const signToken = (userID) => {
   const token = JWT.sign(
@@ -13,7 +14,7 @@ const signToken = (userID) => {
     },
     process.env.secretOrKey,
     // 2 Weeks 14 * 1000 * 60 * 60 * 24 Test Refresh Token Below
-    { expiresIn: 14 * 1000 * 60 * 60 * 24 },
+    { expiresIn: 14 * 1000 * 60 * 60 * 24 }
   );
   return token;
 };
@@ -22,7 +23,7 @@ const randOTP = () => Math.floor(Math.random() * 1000000);
 
 module.exports = {
   updateUserInfo: async (req, res) => {
-    passport.authenticate('jwt', { session: false }, (err, callBack) => {
+    passport.authenticate("jwt", { session: false }, (err, callBack) => {
       if (err) {
         const response = CustomResponse.SERVER_ERROR;
         response.trace = err;
@@ -43,7 +44,7 @@ module.exports = {
             } else {
               res.status(200).json({
                 message: {
-                  msgBody: 'Successfully update user info!',
+                  msgBody: "Successfully update user info!",
                   msgError: true,
                 },
                 document,
@@ -55,7 +56,7 @@ module.exports = {
     })(req, res);
   },
   changePassword: async (req, res) => {
-    passport.authenticate('jwt', { session: false }, (err, callBack) => {
+    passport.authenticate("jwt", { session: false }, (err, callBack) => {
       if (err) {
         const response = CustomResponse.SERVER_ERROR;
         response.trace = err;
@@ -73,28 +74,33 @@ module.exports = {
               if (!value) {
                 res.status(400).json({
                   message: {
-                    msgBody: 'User not found or deleted!',
+                    msgBody: "User not found or deleted!",
                     msgError: true,
                   },
                 });
               } else {
-                value.changePassword(value, currentPassword, newPassword, (err1, document) => {
-                  if (err1 && !err1.errCode) {
-                    const response = CustomResponse.SERVER_ERROR;
-                    response.trace = err1;
-                    res.status(500).json(response);
-                  } else if (err1 && err1.errCode) {
-                    res.status(400).json(err1);
-                  } else {
-                    res.status(200).json({
-                      message: {
-                        msgBody: 'Change password successfully!',
-                        msgError: false,
-                      },
-                      trace: document,
-                    });
+                value.changePassword(
+                  value,
+                  currentPassword,
+                  newPassword,
+                  (err1, document) => {
+                    if (err1 && !err1.errCode) {
+                      const response = CustomResponse.SERVER_ERROR;
+                      response.trace = err1;
+                      res.status(500).json(response);
+                    } else if (err1 && err1.errCode) {
+                      res.status(400).json(err1);
+                    } else {
+                      res.status(200).json({
+                        message: {
+                          msgBody: "Change password successfully!",
+                          msgError: false,
+                        },
+                        trace: document,
+                      });
+                    }
                   }
-                });
+                );
               }
             })
             .catch((reason) => {
@@ -107,7 +113,7 @@ module.exports = {
     })(req, res);
   },
   login: async (req, res, next) => {
-    passport.authenticate('local', { session: false }, (err, callBack) => {
+    passport.authenticate("local", { session: false }, (err, callBack) => {
       if (err && !err.errCode) {
         const response = CustomResponse.SERVER_ERROR;
         response.trace = err;
@@ -132,7 +138,7 @@ module.exports = {
   },
   // Refresh token here
   authenticated: async (req, res, next) => {
-    passport.authenticate('jwt', { session: false }, (err, callBack) => {
+    passport.authenticate("jwt", { session: false }, (err, callBack) => {
       if (err) {
         res.status(500).json({
           isAuthenticated: false,
@@ -160,28 +166,32 @@ module.exports = {
     if (isNormalFlow === undefined || !username) {
       res.status(400).json(CustomResponse.BAD_REQUEST);
     } else if (isNormalFlow) {
-      Users.createUserWithOTP({ email: username, password, fullName }, otp, (err, document) => {
-        if (err && !err.errCode) {
-          const response = CustomResponse.SERVER_ERROR;
-          response.trace = err;
-          res.status(500).json(response);
-        } else if (err && err.errCode) {
-          res.status(400).json(err);
-        } else {
-          res.status(201).json({
-            message: {
-              msgBody: `Mail should be sent to ${username}`,
-              msgError: false,
-            },
-            trace: document,
-          });
+      Users.createUserWithOTP(
+        { email: username, password, fullName },
+        otp,
+        (err, document) => {
+          if (err && !err.errCode) {
+            const response = CustomResponse.SERVER_ERROR;
+            response.trace = err;
+            res.status(500).json(response);
+          } else if (err && err.errCode) {
+            res.status(400).json(err);
+          } else {
+            res.status(201).json({
+              message: {
+                msgBody: `Mail should be sent to ${username}`,
+                msgError: false,
+              },
+              trace: document,
+            });
+          }
         }
-      });
+      );
     } else {
       Users.createUserWithOTP(
         {
           email: username,
-          password: 'SUPER-HARD-TO-REMEMBER-PASSWORD',
+          password: "SUPER-HARD-TO-REMEMBER-PASSWORD",
           fullName: "User's name",
         },
         otp,
@@ -199,7 +209,7 @@ module.exports = {
               trace: document,
             });
           }
-        },
+        }
       );
     }
   },
@@ -234,10 +244,10 @@ module.exports = {
         } else if (!userDocument) {
           res.status(400).json({
             message: {
-              msgBody: 'User does not exist!',
+              msgBody: "User does not exist!",
               msgError: true,
             },
-            errCode: 'ERR_USER_NOT_FOUND',
+            errCode: "ERR_USER_NOT_FOUND",
           });
         } else {
           const newOTP = randOTP();
@@ -273,17 +283,23 @@ module.exports = {
       if (password !== confirmPassword) {
         res.status(400).json(CustomResponse.BAD_REQUEST);
       }
-      Users.resetUserPassword(email, otp, password, confirmPassword, (err, successResponse) => {
-        if (err) {
-          res.status(500).json(err);
-        } else {
-          res.status(200).json(successResponse);
+      Users.resetUserPassword(
+        email,
+        otp,
+        password,
+        confirmPassword,
+        (err, successResponse) => {
+          if (err) {
+            res.status(500).json(err);
+          } else {
+            res.status(200).json(successResponse);
+          }
         }
-      });
+      );
     }
   },
   getUserInfo: async (req, res) => {
-    passport.authenticate('jwt', { session: false }, (err, callBack) => {
+    passport.authenticate("jwt", { session: false }, (err, callBack) => {
       if (err) {
         const response = CustomResponse.SERVER_ERROR;
         response.trace = err;
@@ -295,7 +311,7 @@ module.exports = {
         const { email, fullName, phoneNumber, description, avatar } = callBack;
         res.status(200).json({
           message: {
-            msgBody: 'Get user info successfully!',
+            msgBody: "Get user info successfully!",
             msgError: false,
           },
           data: {
@@ -308,5 +324,12 @@ module.exports = {
         });
       }
     })(req, res);
+  },
+  testController: async function (req, res) {
+    const ret = await userModel.find();
+    console.log("Test log err");
+    res.json({
+      users: ret,
+    });
   },
 };
