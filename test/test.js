@@ -4,15 +4,16 @@ function importTest(name, path) {
   });
 }
 
-describe("Test APIs", () => {
+describe('Test APIs', () => {
   beforeEach(function () {
-    console.log("Try running something before each test!");
+    console.log('Try running something before each test!');
   });
 
-  importTest("users.test", "./users/users.test");
-  importTest("all.test.js", "./all/all.test");
+  // importTest('changeName.test', './users/changeName.test');
+
+  importTest('users.test', './users/users.test');
 
   after(function () {
-    console.log("Run all test!");
+    console.log('Run all test!');
   });
 });

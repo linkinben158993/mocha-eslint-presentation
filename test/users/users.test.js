@@ -4,7 +4,6 @@ const request = require('chai-http');
 chai.should();
 chai.use(request);
 
-
 // Test users route
 describe('POST /users/login:', () => {
   let server;
@@ -21,6 +20,7 @@ describe('POST /users/login:', () => {
       username: 'an@gmail.com',
       password: '123456',
     };
+
     chai
       .request(server)
       .post('/users/login')
@@ -34,7 +34,7 @@ describe('POST /users/login:', () => {
         response.body.should.have.property('user').to.deep.equal({
           email: 'an@gmail.com',
           role: 1,
-          fullName: "User's Name",
+          fullName: 'Duc Cao',
           id: '6097fbd52a6b1433b2ad0a8c',
         });
         console.log('Pass field user!');
@@ -69,7 +69,3 @@ describe('POST /users/login:', () => {
       .catch(done);
   });
 });
-
-
-// Test Get user detail asfd
-// describe('GET /users/')

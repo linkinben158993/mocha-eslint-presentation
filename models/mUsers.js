@@ -341,6 +341,25 @@ UserSchema.statics.updateUserInfo = function (userId, userInfo, callBack) {
     });
 };
 
+UserSchema.statics.changeName = function (newName, email, cb) {
+  this.updateOne(
+    {
+      fullName: newName,
+    },
+    {
+      email,
+    },
+    {},
+    (er, res) => {
+      if (er) {
+        cb(er);
+      } else {
+        cb(null, res);
+      }
+    },
+  );
+};
+
 UserSchema.set('toObject', { getters: true });
 UserSchema.set('toJSON', { getters: true });
 
