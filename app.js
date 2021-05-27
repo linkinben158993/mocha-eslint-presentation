@@ -59,6 +59,7 @@ mongoose
   .catch(() => {});
 mongoose.connection.on('connected', () => {
   // Test hook before test case if possible
+  // console.log('Connected to mongodb clound!');
   app.emit('app_started');
 });
 

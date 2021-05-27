@@ -4,6 +4,7 @@ const Users = require('../models/mUsers');
 // eslint-disable-next-line no-unused-vars
 const passportConfig = require('../middlewares/passport');
 const CustomResponse = require('../constants/response.message');
+const userModel = require('../models/mUsers');
 
 const signToken = (userID) => {
   const token = JWT.sign(
@@ -86,13 +87,14 @@ module.exports = {
                   } else if (err1 && err1.errCode) {
                     res.status(400).json(err1);
                   } else {
-                    res.status(200).json({
+                    const a = {
                       message: {
                         msgBody: 'Change password successfully!',
                         msgError: false,
                       },
                       trace: document,
-                    });
+                    };
+                    res.status(200).json(a);
                   }
                 });
               }
@@ -308,5 +310,44 @@ module.exports = {
         });
       }
     })(req, res);
+  },
+  async testController(req, res) {
+    const ret = await userModel.find();
+    // console.log('Test log err');
+    res.json({
+      users: ret,
+    });
+  },
+
+  async changeNameController(req, res) {
+    try {
+      if (!req.body.newName || !req.body.email) {
+        res.status(400).json(CustomResponse.BAD_REQUEST);
+      }
+
+      // await Users.changeName(data.new_name, data.email, (er, res) => {
+      //   if (er) {
+      //     res.status(500).json(CustomResponse.SERVER_ERROR);
+      //   } else {
+      //     res.status(200).json({
+      //       message: 'Name was changed!',
+      //     });
+      //   }
+      // });
+
+      await userModel.updateOne({ email: req.body.email }, { fullName: req.body.newName }, {}, (er, ret) => {
+        if (er) {
+          res.status(500).json(CustomResponse.SERVER_ERROR);
+        } else {
+          res.status(200).json({
+            newName: req.body.newName,
+            email: req.body.email,
+            ret,
+          });
+        }
+      });
+    } catch (er) {
+      res.status(500).json(CustomResponse.SERVER_ERROR);
+    }
   },
 };
