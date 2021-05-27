@@ -9,6 +9,8 @@ describe('Test APIs', () => {
     console.log('Try running something before each test!');
   });
 
+  // importTest('changeName.test', './users/changeName.test');
+
   importTest('users.test', './users/users.test');
 
   after(function () {
